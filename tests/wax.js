@@ -34,8 +34,8 @@ const fs = require('fs/promises');
 // Utility module.
 const {doBy} = require('../procs/job');
 // WAX
-const runWax = require('@wally-ax/wax-dev');
-const waxDev = {runWax};
+const {runWaxUrl} = require('@wally-ax/wax-dev');
+const waxDev = {runWaxUrl};
 
 // FUNCTIONS
 
@@ -47,13 +47,13 @@ exports.reporter = async (page, report, actIndex, timeLimit) => {
   // Run WAX.
   const act = report.acts[actIndex];
   const rules = act.rules || [];
-  const pageCode = await page.content();
+  const pageUrl = page?._mainFrame?._url
   const waxOptions = {
     rules,
     apiKey: process.env.WAX_KEY || ''
   };
   const actReport = await doBy(
-    timeLimit, waxDev, 'runWax', [pageCode, waxOptions], 'wax report retrieval'
+    timeLimit, waxDev, 'runWaxUrl', [pageUrl, waxOptions], 'wax report retrieval'
   );
   // If WAX failed:
   if (typeof actReport === 'string') {
